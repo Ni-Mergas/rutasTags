@@ -1,23 +1,42 @@
 const { response } = require('express');
 
-const categoriesGet = ( req, res = response ) =>{
+const Categories = require('../models/categories');
+
+const categoriesGet = async ( req, res = response ) =>{
+    const query = { status:true }
+
+     const [ categories, total ] = await Promise.all([
+         Categories.find(query),
+         Categories.countDocuments(query)
+     ]);
+
     res.json({
-        msg:'get API - desde controlador'
+        total,
+        categories
     });
 }
 
-const categoriesPost = ( req, res ) =>{
+const categoriesPost = async ( req, res = response) =>{
 
-    const body = req.body;
+    const {name, category} = req.body;
+    const categories = new Categories({name, category});
+
+    await categories.save()
+
     res.json({
-        msg:'post API - desde controlador',
-        body
-    });
+
+        msg:'post API - desde controador',
+        categories
+
+    })
 }
 
-const categoriesDelete = ( req, res ) =>{
+const categoriesDelete = async ( req, res ) =>{
+
+    const {id} = req.params;
+    const categories = await Categories.findByIdAndUpdate(id,{ status:false } );
     res.json({
-        msg:'delete API - desde Controlador'
+        categories
     });
 }
 module.exports = {
