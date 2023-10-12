@@ -5,7 +5,8 @@ const {validarCampos} = require('../middlewares/validar-campos');
 
 const { categoriesGet, 
         categoriesPost, 
-        categoriesDelete } = require('../controllers/categories');
+        categoriesDelete, 
+        categoriesPut} = require('../controllers/categories');
 
 const router = Router();
 
@@ -17,6 +18,8 @@ check("name","nombre obligatorio").not().isEmpty(),
 check("category", "la categoria es obligatoria").not().isEmpty(), 
 validarCampos, 
 categoriesPost );
+
+router.put('/:id', categoriesPut);
 
 router.delete('/:id', categoriesDelete);
 

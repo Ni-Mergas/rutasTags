@@ -34,7 +34,7 @@ class Server{
     //Middlewares  
 
     middlewares(){
-        console.log('prueba')
+  
         //cors
         this.app.use( cors() );
 
