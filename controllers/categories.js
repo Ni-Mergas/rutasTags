@@ -1,4 +1,6 @@
 const { response } = require('express');
+const csv = require('csv-parser')
+const fs = require('fs')
 
 const Categories = require('../models/categories');
 
@@ -77,9 +79,34 @@ const categoriesDelete = async ( req, res ) =>{
         throw new Error('Error al borrar tag')
     }
 }
+
+const crearTagsCsv = (csvFilePath) => {
+  const tags = [];
+
+  fs.createReadStream(csvFilePath)
+    .pipe(csv())
+    .on('data', (row) => {
+      // Procesa cada fila del CSV y crea etiquetas
+      const tagName = row.name; // Nombre de la etiqueta desde el CSV
+
+      // Aquí puedes agregar validaciones o cualquier lógica adicional que necesites
+
+      tags.push({ name: tagName });
+    })
+    .on('end', () => {
+      // Ahora tienes un array de etiquetas creadas desde el CSV (tags)
+      console.log('Etiquetas creadas:', tags);
+
+      // Lógica para guardar las etiquetas en tu base de datos o donde sea necesario
+      // Ejemplo: categoriesPost(tags);
+    });
+};
+
+
 module.exports = {
     categoriesGet,
     categoriesPost,
     categoriesDelete,
-    categoriesPut
+    categoriesPut,
+    crearTagsCsv
 }
