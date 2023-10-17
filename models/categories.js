@@ -8,8 +8,8 @@ const CategorieSchema = Schema({
         required:[true,'nombre obligatorio']
     },
     category:{
-        type:String,
-        required:[true,'catetgoria obligatoria']
+        type:String
+    
     },
     status:{
         type:Boolean,

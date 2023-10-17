@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const { dbConnection } = require('../database/config');
-
+const bodyParser = require('body-parser');
 
 class Server{
 
@@ -10,6 +10,8 @@ class Server{
         this.app = express();
         this.port = process.env.PORT;
         this.categoriesPath = '/api/categories';
+        this.tagCreatePath = '/api/tag-create';
+
         // Conectar a la base de datos
         this.conectarDB();
         //iniciar middleware
@@ -38,8 +40,12 @@ class Server{
         //cors
         this.app.use( cors() );
 
-        //Lectura y parseo del body, por ahora JSON, OJO QUE DEBE SER CSV
+        //Lectura y parseo del body
         this.app.use(express.json());
+
+        //Parseo para el form data
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: true }));
 
       
     }
@@ -49,6 +55,7 @@ class Server{
 
     routes () {
         this.app.use(this.categoriesPath, require('../routes/categories'));
+        this.app.use(this.tagCreatePath, require('../routes/tag-create'));
     }
 
 
