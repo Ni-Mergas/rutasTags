@@ -8,7 +8,8 @@ const CategorieSchema = Schema({
         required:[true,'nombre obligatorio']
     },
     category:{
-        type:String
+        type:String,
+        required:[true,'category es obligatorio']
     
     },
     status:{
@@ -18,7 +19,7 @@ const CategorieSchema = Schema({
 });
 
 CategorieSchema.methods.toJSON = function (){
-    const { __v, password, _id, ...categories} = this.toObject();
+    const { __v, _id, ...categories} = this.toObject();
     return categories;
 }
 module.exports = model( 'Categorie',CategorieSchema);

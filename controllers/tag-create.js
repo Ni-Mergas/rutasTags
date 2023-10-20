@@ -1,46 +1,53 @@
-const { response } = require('express');
 
-const csv = require('csv-parser')
-const fs = require('fs')
+const Tags = require('../models/tags');
+const { parse } = require('csv-parse/sync');
 
-const csvFilePath = ('./data/Marcas.csv')
+const { readFileSync } = require('fs');
 
-const categoriesPutTagsBD = async ( tags) => {
-    try {
-      
-      await Categories.insertMany(tags);
+const filePath = './data/marcas (1).csv';
+
+const readCsvFile = (filePath) => {
+  try {
+    const fileContent = readFileSync(filePath, 'utf-8');
+    const csvContent = parse(fileContent, {
+      columns: true
+    });
+    return csvContent;
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error al leer el archivo CSV', error);
+  }
+};
+
+const saveTagsToDatabase = async (tags) => {
+  try {
+    // Utiliza Mongoose o el método que corresponda para guardar las etiquetas en MongoDB
+    await Tags.insertMany(tags);
+    console.log('Etiquetas guardadas en la base de datos MongoDB');
+  } catch (error) {
+    console.error('Error al guardar etiquetas en la base de datos', error);
+    throw error; // Re-lanzar el error
+  }
+};
+
+const main = async () => {
+  try {
+    const csvContent = readCsvFile(filePath);
+    console.log(csvContent);
+
+    // Crear las etiquetas a partir del contenido del archivo CSV
+    const tags = csvContent.map((row) => ({
+      name: row.name
+    }));
+
+    console.log('Etiquetas creadas:', tags);
+
+    // Guardar las etiquetas en la base de datos
+    await saveTagsToDatabase(tags);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+main(); 
   
-      console.log('Etiquetas guardadas en la base de datos');
-    } catch (error) {
-     
-      throw new Error('Error al guardar etiquetas en la base de datos',error);
-    }
-  };
-  
-  const crearTagsCsv = (csvFilePath) => {
-    const tags = [];
-    fs.createReadStream(csvFilePath)
-     .pipe(csv())
-      .on('data', (row) => {
-        // Procesa cada fila del CSV y crea etiquetas
-        const tagName = row.name; // Nombre de la etiqueta desde el CSV
-
-        tags.push({ name: tagName });
-        
-      })
-      .on('end',  async() => {
-        //  array de etiquetas creadas desde el CSV (tags)
-        console.log('Etiquetas creadas:', tags);
-    
-
-
-        // Lógica para guardar las etiquetas base de datos 
-    
-         await categoriesPutTagsBD(tags)
-       
-      });
- };
-
- module.exports ={
-    crearTagsCsv
- }

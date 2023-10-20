@@ -23,8 +23,6 @@ const categoriesGet = async ( req, res = response ) =>{
     }
 }
 
-
-
 const categoriesPost = async ( req, res = response) =>{
 
     try {
@@ -80,12 +78,6 @@ const categoriesDelete = async ( req, res ) =>{
         throw new Error('Error al borrar tag')
     }
 }
-
-  
-
-
-
-
 module.exports = {
     categoriesGet,
     categoriesPost,
