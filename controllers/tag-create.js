@@ -1,10 +1,10 @@
 
 const Tags = require('../models/tags');
 const { parse } = require('csv-parse/sync');
-
 const { readFileSync } = require('fs');
+const { CLIENT_RENEG_LIMIT } = require('tls');
 
-const filePath = './data/marcas (1).csv';
+const filePath = './data/marcas.csv';
 
 const readCsvFile = (filePath) => {
   try {
@@ -19,35 +19,84 @@ const readCsvFile = (filePath) => {
   }
 };
 
-const saveTagsToDatabase = async (tags) => {
+const createTagsPost = async (req, res) => {
   try {
-    // Utiliza Mongoose o el método que corresponda para guardar las etiquetas en MongoDB
-    await Tags.insertMany(tags);
-    console.log('Etiquetas guardadas en la base de datos MongoDB');
-  } catch (error) {
-    console.error('Error al guardar etiquetas en la base de datos', error);
-    throw error; // Re-lanzar el error
-  }
-};
-
-const main = async () => {
-  try {
-    const csvContent = readCsvFile(filePath);
-    console.log(csvContent);
-
-    // Crear las etiquetas a partir del contenido del archivo CSV
+     const csvContent = readCsvFile(filePath);
+    
     const tags = csvContent.map((row) => ({
       name: row.name
     }));
 
-    console.log('Etiquetas creadas:', tags);
+    // Guarda los tags en la base de datos
+    const createdTags = await Tags.create(tags);
 
-    // Guardar las etiquetas en la base de datos
-    await saveTagsToDatabase(tags);
+    console.log('Etiquetas creadas:', createdTags);
+
+    res.json({
+      createdTags
+    });
+
   } catch (error) {
     console.log(error);
   }
 };
 
-main(); 
+const tagsGet = async ( req, res ) => {
+
   
+  try {
+    const query = { status:true }
+
+    const tags = await Tags.find( query )
+
+    res.json({
+
+      tags
+    })
+    
+  } catch ( error ) {
+
+    console.log( error );
+  }
+}
+
+const tagsPut = async (req, res) => {
+
+  try {
+    const { id } = req.params;
+    const body = req.body;
+    const tags = await Tags.findByIdAndUpdate( id, body );
+    
+    res.json({
+      tags
+    })
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const tagsDelete = async ( req, res ) =>{
+
+  try {
+
+    const { id } = req.params;
+    const tags = await Tags.findByIdAndUpdate( id, { status:false } );
+
+    res.json({
+      tags
+    });
+    
+  } catch (error) {
+    
+    console.log(error); 
+
+  }
+}
+
+module.exports = {
+  createTagsPost,
+  tagsGet,
+  tagsPut,
+  tagsDelete
+};

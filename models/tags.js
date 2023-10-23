@@ -15,7 +15,7 @@ const TagSchema = Schema({
 });
 
 TagSchema.methods.toJSON = function(){
-    const {__v, _id, ...tags} = thi.toObject();
+    const {__v, _id, ...tags} = this.toObject();
     return tags;
 }
 
