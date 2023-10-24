@@ -3,6 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const { dbConnection } = require('../database/config');
 const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
+const { CSV_PATHS } = require('../enums/csv-path');
+
 
 class Server{
 
@@ -46,6 +49,12 @@ class Server{
         //Parseo para el form data
         this.app.use(bodyParser.json());
         this.app.use(express.urlencoded({ extended: true }));
+
+        //subir los archivos desde el postman.
+        this.app.use( fileUpload({
+            createParentPath:true
+        }));
+
 
       
     }

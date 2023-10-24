@@ -5,11 +5,42 @@ const { createTagsPost,
         tagsPut,
         tagsDelete } = require('../controllers/tag-create');
 
+const fileUpload = require('express-fileupload');
+const { CSV_PATHS } = require('../enums/csv-path');
+
 const router = Router();
 
 router.get('/', tagsGet);
 
 router.post('/', createTagsPost);
+
+
+router.post('/uploadFile', async ( req, res) =>{
+    const { files } = req;
+    if (!files || Object.keys(files).length === 0) {
+        return res.status(400).send('No se cargarón los archivos correctamente.');
+      }
+
+    let { file } = files;
+    let path = CSV_PATHS.tags;
+    await (new Promise((resolve, reject) => {
+        file.mv(path, function(err) {
+            if (err) reject(err);
+            else resolve()
+        });
+    }));
+
+    // ejecute la funcion de leer el archivo
+    const tagsStored =  await createTagsPost(req, res);
+
+    //borrar csv
+
+    const deleteFile = 
+
+    //finalizar peticion
+    res.send(tagsStored)
+
+})
 
 router.put('/:id', tagsPut);
 

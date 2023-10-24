@@ -2,9 +2,7 @@
 const Tags = require('../models/tags');
 const { parse } = require('csv-parse/sync');
 const { readFileSync } = require('fs');
-const { CLIENT_RENEG_LIMIT } = require('tls');
-
-const filePath = './data/marcas.csv';
+const { CSV_PATHS } = require('../enums/csv-path');
 
 const readCsvFile = (filePath) => {
   try {
@@ -21,23 +19,21 @@ const readCsvFile = (filePath) => {
 
 const createTagsPost = async (req, res) => {
   try {
-     const csvContent = readCsvFile(filePath);
-    
+     const csvContent = readCsvFile(CSV_PATHS.tags);
+    const { category } = req.body;
     const tags = csvContent.map((row) => ({
-      name: row.name
+      name: row.name,
+      category
     }));
 
     // Guarda los tags en la base de datos
     const createdTags = await Tags.create(tags);
 
     console.log('Etiquetas creadas:', createdTags);
-
-    res.json({
-      createdTags
-    });
+    return createdTags;
 
   } catch (error) {
-    console.log(error);
+    throw new Error(error)
   }
 };
 
@@ -98,5 +94,6 @@ module.exports = {
   createTagsPost,
   tagsGet,
   tagsPut,
-  tagsDelete
+  tagsDelete,
+  readCsvFile
 };
