@@ -7,12 +7,19 @@ const { createTagsPost,
 
 const fileUpload = require('express-fileupload');
 const { CSV_PATHS } = require('../enums/csv-path');
+const fs = require( 'fs' );
+const { check } = require('express-validator');
+const { tagExiste } = require('../helpers/validator');
+const { validarCampos } = require('../middlewares/validar-campos');
 
 const router = Router();
 
 router.get('/', tagsGet);
 
-router.post('/', createTagsPost);
+router.post('/',
+check('name').custom(tagExiste),
+validarCampos,
+ createTagsPost);
 
 
 router.post('/uploadFile', async ( req, res) =>{
@@ -31,11 +38,16 @@ router.post('/uploadFile', async ( req, res) =>{
     }));
 
     // ejecute la funcion de leer el archivo
+
     const tagsStored =  await createTagsPost(req, res);
 
     //borrar csv
 
-    const deleteFile = 
+    fs.unlink( path, (err) => {
+        if (err) {
+          console.error('Error al eliminar el archivo CSV:', err);
+        }
+      });
 
     //finalizar peticion
     res.send(tagsStored)

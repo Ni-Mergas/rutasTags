@@ -19,7 +19,7 @@ const readCsvFile = (filePath) => {
 
 const createTagsPost = async (req, res) => {
   try {
-     const csvContent = readCsvFile(CSV_PATHS.tags);
+    const csvContent = readCsvFile(CSV_PATHS.tags);
     const { category } = req.body;
     const tags = csvContent.map((row) => ({
       name: row.name,
@@ -37,7 +37,7 @@ const createTagsPost = async (req, res) => {
   }
 };
 
-const tagsGet = async ( req, res ) => {
+const tagsGet = async ( _req, res ) => {
 
   
   try {
@@ -56,7 +56,7 @@ const tagsGet = async ( req, res ) => {
   }
 }
 
-const tagsPut = async (req, res) => {
+const tagsPut = async ( req, res ) => {
 
   try {
     const { id } = req.params;
@@ -94,6 +94,5 @@ module.exports = {
   createTagsPost,
   tagsGet,
   tagsPut,
-  tagsDelete,
-  readCsvFile
+  tagsDelete
 };

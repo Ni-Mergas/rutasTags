@@ -8,6 +8,10 @@ const TagSchema = Schema({
         required:[true, ' nombre obligatorio']
     },
 
+    category:{
+        type: String
+    },
+
     status:{
         type:Boolean,
         default:true
