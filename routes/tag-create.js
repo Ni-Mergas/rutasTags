@@ -16,10 +16,7 @@ const router = Router();
 
 router.get('/', tagsGet);
 
-router.post('/',
-check('name').custom(tagExiste),
-validarCampos,
- createTagsPost);
+router.post('/', createTagsPost);
 
 
 router.post('/uploadFile', async ( req, res) =>{
